@@ -15,16 +15,12 @@ await File.WriteAllBytesAsync(args[1],
 
 									for(value >>= 1; value != 0; value >>= 1) {
 
-										result <<= 1;
-										result |= (byte) (value & 1);
+										result = (byte) ((result << 1) | (value & 1));
 
 										size--;
 
 									}
 
-									result <<= size;
+									return result <<= size;
 
-									return result;
-
-								})
-								.ToArray());
+								}).ToArray());
