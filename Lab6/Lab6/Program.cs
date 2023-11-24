@@ -12,7 +12,7 @@ Dictionary<string, List<string>> dataFieldNames =
 
 		{
 			"GGA",
-			new List<string>() {
+			new() {
 
 				"UTC",
 				"Latitude",
@@ -32,7 +32,7 @@ Dictionary<string, List<string>> dataFieldNames =
 		},
 		{
 			"RMC",
-			new List<string>() {
+			new() {
 
 				"UTC",
 				"Status",
@@ -49,7 +49,7 @@ Dictionary<string, List<string>> dataFieldNames =
 		},
 		{
 			"VTG",
-			new List<string>() {
+			new() {
 
 				"True TMG (degrees)",
 				"True TMG Relative To",
@@ -84,7 +84,7 @@ foreach(string message in args) {
 	PrintCentered("NOW PROCESSING", true);
 	PrintInnerSeparator();
 	PrintCentered(message, true);
-	PrintLowerSeparator(true);
+	PrintLowerSeparator(true, false);
 
 	PrintUpperSeparator();
 
@@ -96,13 +96,13 @@ foreach(string message in args) {
 
 	if(regexFailed) {
 
-		PrintLowerSeparator(false);
+		PrintLowerSeparator(false, true);
 
 		continue;
 
 	}
 
-	PrintLowerSeparator(true);
+	PrintLowerSeparator(true, false);
 	PrintUpperSeparator();
 
 	string content = messageRegexMatch.Groups[1].Value;
@@ -111,7 +111,7 @@ foreach(string message in args) {
 	PrintMultiple("Content", content);
 	PrintInnerSeparator();
 	PrintMultiple("Checksum", checksum);
-	PrintLowerSeparator(true);
+	PrintLowerSeparator(true, false);
 	PrintUpperSeparator();
 	PrintCentered("CHECKSUM VALIDATION", true);
 	PrintInnerSeparator();
@@ -130,13 +130,13 @@ foreach(string message in args) {
 
 	if(!checksumValid) {
 
-		PrintLowerSeparator(false);
+		PrintLowerSeparator(false, true);
 
 		continue;
 
 	}
 
-	PrintLowerSeparator(true);
+	PrintLowerSeparator(true, false);
 	PrintUpperSeparator();
 	PrintCentered("DATA FIELDS", true);
 	PrintInnerSeparator();
@@ -162,15 +162,7 @@ foreach(string message in args) {
 										PadMultiple(dataField.First, 30, dataField.Second, 70))
 							.Aggregate((a, b) => $"{a}\n+{thinSeparator}+\n{b}"));
 
-	PrintLowerSeparator(false);
-
-	if(args.Last() != message) {
-
-		Console.WriteLine("\n");
-		PrintCentered("* * *", false);
-		Console.WriteLine("\n");
-
-	}
+	PrintLowerSeparator(false, args.Last() != message);
 
 }
 
@@ -180,13 +172,21 @@ Console.WriteLine();
 
 void PrintUpperSeparator() => Console.WriteLine($"/{thickSeparator}\\");
 void PrintInnerSeparator() => Console.WriteLine($"+{thinSeparator}+");
-void PrintLowerSeparator(bool printFollower) {
+void PrintLowerSeparator(bool printFollower, bool printExtendedFollower) {
 
 	Console.WriteLine($"\\{thickSeparator}/");
 
 	if(printFollower) {
 
 		Console.WriteLine($"{PadCenter("+", 107)}\n{PadCenter("|", 107)}");
+
+	}
+
+	if(printExtendedFollower) {
+
+		Console.WriteLine("\n");
+		PrintCentered("* * *", false);
+		Console.WriteLine("\n");
 
 	}
 
